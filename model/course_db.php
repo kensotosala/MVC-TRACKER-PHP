@@ -27,3 +27,23 @@ function get_course_name($course_id)
     $course_name = $course['courseName'];
     return $course_name;
 }
+
+function delete_course($course_id)
+{
+    global $db;
+    $query = 'DELETE FROM courses WHERE courseID = :course_id';
+    $statement = $db->prepare($query);
+    $statement->bindValue(':course_id', $course_id);
+    $statement->execute();
+    $statement->closeCursor();
+}
+
+function add_course($course_name)
+{
+    global $db;
+    $query = 'INSERT INTO courses (courseName) VALUES (:course_name)';
+    $statement = $db->prepare($query);
+    $statement->bindValue(':courseName', $course_name);
+    $statement->execute();
+    $statement->closeCursor();
+}
