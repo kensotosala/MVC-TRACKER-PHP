@@ -1,12 +1,15 @@
-<?php include('view/header.php'); ?>
+<?php include('view/header.php') ?>
 
-<?php if (!empty($courses)) { ?>
+<?php if ($courses) { ?>
+
     <section id="list" class="list">
         <header class="list__row list__header">
-            <h1>Course List</h1>
+            <h1>
+                Course List
+            </h1>
         </header>
 
-        <?php foreach ($courses as $course) { ?>
+        <?php foreach ($courses as $course) : ?>
             <div class="list__row">
                 <div class="list__item">
                     <p class="bold"><?= $course['courseName'] ?></p>
@@ -14,15 +17,15 @@
                 <div class="list__removeItem">
                     <form action="." method="post">
                         <input type="hidden" name="action" value="delete_course">
-                        <input type="hidden" name="course_id" value="<?= $course['courseID'] ?>">
+                        <input type="hidden" name="course_id" value="<?= $course['courseID']; ?>">
                         <button class="remove-button">❌</button>
                     </form>
                 </div>
             </div>
-        <?php } ?>
+        <?php endforeach; ?>
     </section>
 <?php } else { ?>
-    <p>No courses exist yet.</p>
+    <p>No categories exist yet.</p>
 <?php } ?>
 
 <section id="add" class="add">
@@ -31,7 +34,7 @@
         <input type="hidden" name="action" value="add_course">
         <div class="add__inputs">
             <label>Name:</label>
-            <input type="text" name="course_name" maxlength="50" placeholder="Name" autofocus required>
+            <input type="text" name="course_name" maxlength="30" placeholder="Name" autofocus required>
         </div>
         <div class="add__addItem">
             <button class="add-button bold">Add</button>
@@ -42,4 +45,4 @@
 <br>
 <p><a href=".">View &amp; Add Assignments</a></p>
 
-<?php include('view/footer.php'); ?>
+<?php include('view/footer.php') ?>

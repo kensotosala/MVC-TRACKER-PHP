@@ -1,15 +1,25 @@
 <?php
 require('model/database.php');
-require('model/assignments_db.php');
+require('model/assignment_db.php');
 require('model/course_db.php');
 
 $assignment_id = filter_input(INPUT_POST, 'assignment_id', FILTER_VALIDATE_INT);
-$description = htmlspecialchars(filter_input(INPUT_POST, 'description'));
-$course_name = htmlspecialchars(filter_input(INPUT_POST, 'course_name'));
+$description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
+$course_name = filter_input(INPUT_POST, 'course_name', FILTER_SANITIZE_STRING);
 
-$course_id = filter_input(INPUT_POST, 'course_id', FILTER_VALIDATE_INT) ?: filter_input(INPUT_GET, 'course_id', FILTER_VALIDATE_INT);
+$course_id = filter_input(INPUT_POST, 'course_id', FILTER_VALIDATE_INT);
+if (!$course_id) {
+    $course_id = filter_input(INPUT_GET, 'course_id', FILTER_VALIDATE_INT);
+    // an assignment of NULL or FALSE is ok here
+}
 
-$action = htmlspecialchars(filter_input(INPUT_POST, 'action')) ?: htmlspecialchars(filter_input(INPUT_GET, 'action', FILTER_DEFAULT)) ?: 'list_assignments';
+$action = filter_input(INPUT_POST, 'action', FILTER_SANITIZE_STRING);
+if (!$action) {
+    $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
+    if (!$action) {
+        $action = 'list_assignments'; // assigning default value if NULL or FALSE
+    }
+}
 
 switch ($action) {
     case "list_courses":
@@ -35,7 +45,7 @@ switch ($action) {
             try {
                 delete_course($course_id);
             } catch (PDOException $e) {
-                $error = "You cannot delete a course if assignments exist in the course.";
+                $error = "You cannot delete a course if assignments exist for it.";
                 include('view/error.php');
                 exit();
             }
@@ -53,7 +63,7 @@ switch ($action) {
         break;
     default:
         $course_name = get_course_name($course_id);
-        $assignments = get_assignment_by_course($course_id);
         $courses = get_courses();
+        $assignments = get_assignments_by_course($course_id);
         include('view/assignment_list.php');
 }
