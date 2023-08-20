@@ -10,3 +10,6 @@
 
 <body>
     <main class="main"></main>
+</body>
+
+</html>
